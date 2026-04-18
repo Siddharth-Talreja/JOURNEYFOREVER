@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JourneyForever — AI Itinerary Planner</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<div id="noise"></div>
+<div class="orb" id="orb-a"></div>
+<div class="orb" id="orb-b"></div>
+<div id="overlay"><div class="spinner"></div></div>
+<div id="toast"></div>
+
+<!-- Saved panel -->
+<div id="saved-panel">
+  <div class="saved-drawer">
+    <div class="row-between" style="margin-bottom:6px">
+      <h3>Saved Itineraries</h3>
+      <button class="btn-icon" id="btn-close-saved">✕</button>
+    </div>
+    <p class="sub">Click any itinerary to load it</p>
+    <div class="saved-list" id="saved-list"></div>
+  </div>
+</div>
+
+<div id="app">
+  <nav id="main-nav">
+    <div class="nav-logo">JourneyForever</div>
+    <div class="nav-steps">
+      <div class="nav-step"><div class="step-bar"></div><span class="step-lbl">Home</span></div>
+      <div class="nav-step"><div class="step-bar"></div><span class="step-lbl">Destinations</span></div>
+      <div class="nav-step"><div class="step-bar"></div><span class="step-lbl">Configure</span></div>
+      <div class="nav-step"><div class="step-bar"></div><span class="step-lbl">Itinerary</span></div>
+    </div>
+    <div class="nav-actions">
+      <button class="btn-saved" id="btn-view-saved">📂 My Trips</button>
+    </div>
+  </nav>
+
+  <div class="page-wrap">
+
+    <!-- ══ SCREEN 1 — HOME ══════════════════════════════════════════ -->
+    <section id="screen-home" class="screen">
+      <div class="eyebrow">✦ Powered by Gemini AI ✦</div>
+      <h1 class="hero-h1">Plan Any Trip<br><em>Anywhere</em> on Earth</h1>
+      <p class="hero-sub">
+        Type any destination — Gemini AI builds a complete day-by-day itinerary
+        with real places, local tips, and rich travel narratives.
+      </p>
+      <div class="floating-cards" id="floating-cards"></div>
+      <div class="home-cta-row">
+        <button class="btn-primary" id="btn-start">Start Planning →</button>
+        <button class="btn-saved" onclick="document.getElementById('btn-view-saved').click()">📂 Load a Trip</button>
+      </div>
+    </section>
+
+    <!-- ══ SCREEN 2 — SEARCH / ADD DESTINATIONS ══════════════════════ -->
+    <section id="screen-search" class="screen">
+      <div class="sec-hdr">
+        <div class="sec-num">Step 01</div>
+        <h2 class="sec-title">Where do you want to go?</h2>
+        <p class="sec-sub">Search any city, region or country in the world. Add up to 4.</p>
+      </div>
+
+      <!-- Search box -->
+      <div class="search-box-wrap">
+        <span class="search-icon">🔍</span>
+        <input id="search-input" class="search-box" type="text"
+          placeholder="e.g. Lisbon, Patagonia, Rajasthan, Iceland…" autocomplete="off" />
+      </div>
+
+      <!-- AI search results -->
+      <div id="search-results"></div>
+
+      <!-- Popular suggestions -->
+      <div class="sugg-section">
+        <div class="sugg-label">✦ Popular Destinations</div>
+        <div id="suggested-chips"></div>
+      </div>
+
+      <!-- Added destinations list -->
+      <div class="added-section">
+        <div class="sugg-label">Your Destinations</div>
+        <div id="added-destinations"></div>
+      </div>
+
+      <div class="row-between" style="margin-top:36px">
+        <button class="btn-ghost" id="btn-back-home">← Back</button>
+        <button class="btn-primary" id="btn-continue-search" disabled>Configure Trip →</button>
+      </div>
+    </section>
+
+    <!-- ══ SCREEN 3 — CONFIGURE ══════════════════════════════════════ -->
+    <section id="screen-configure" class="screen">
+      <div class="sec-hdr">
+        <div class="sec-num">Step 02</div>
+        <h2 class="sec-title">Trip Details</h2>
+        <p class="sec-sub" id="cfg-sub"></p>
+      </div>
+
+      <div class="dest-tags-row" id="cfg-dest-tags"></div>
+
+      <div class="cfg-sec">
+        <div class="cfg-label">Trip Name</div>
+        <div class="title-input-row">
+          <input class="title-input" id="trip-title-input" type="text" placeholder="Name your adventure…" />
+          <button class="btn-ai-title" id="btn-ai-title">✦ Suggest</button>
+        </div>
+      </div>
+
+      <div class="cfg-sec">
+        <div class="cfg-label">Travelers</div>
+        <div class="traveler-row" id="traveler-row"></div>
+      </div>
+
+      <div class="cfg-sec">
+        <div class="cfg-label">Budget Style</div>
+        <div class="budget-row" id="budget-row"></div>
+      </div>
+
+      <div class="estimate-box">
+        <div>
+          <div class="est-label">Estimated Total</div>
+          <div class="est-amount" id="estimate-amount">$0</div>
+        </div>
+        <div class="est-meta" id="estimate-meta"></div>
+      </div>
+
+      <div class="ai-notice">
+        ✦ Gemini will generate a fully personalised itinerary with real places, day themes,
+        accommodation tips, and local insights for every destination.
+      </div>
+
+      <div class="row-between">
+        <button class="btn-ghost" id="btn-back-search">← Back</button>
+        <button class="btn-primary" id="btn-generate">✦ Generate with Gemini</button>
+      </div>
+    </section>
+
+    <!-- ══ SCREEN 4 — ITINERARY VIEW ══════════════════════════════════ -->
+    <section id="screen-view" class="screen">
+      <aside class="sidebar">
+        <div class="sb-label">Your Itinerary</div>
+        <div id="sidebar-body"></div>
+        <div class="sb-footer">
+          <button class="btn-export" id="btn-export">📄 Export PDF</button>
+          <button class="btn-new-trip" id="btn-new-trip">← Plan New Trip</button>
+        </div>
+      </aside>
+      <div class="day-main" id="day-main"></div>
+    </section>
+
+  </div>
+</div>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
